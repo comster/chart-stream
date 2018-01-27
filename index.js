@@ -33,7 +33,7 @@ console.log('init')
     // })
   })
 
-  server.listen(5000, function () {
+  server.listen(5000, '0.0.0.0', function () {
     sse.interval.unref()
     console.log('server listening')
     cb('http://localhost:' + server.address().port)
