@@ -5,11 +5,16 @@ var pump = require('pump')
 var opn = require('opn')
 var chart = require('./')
 
-pump(process.stdin, chart(ready), function (err) {
-  if (err) throw err
-  process.exit()
-})
-
 function ready (url) {
-  opn(url)
+    console.log('ready at '+url);
+    
+    setInterval(() => {}, Number.POSITIVE_INFINITY);
+//   opn(url).then(() => {
+//         console.log('opn closed')
+//     }, (err)=>{
+//         console.log('opn err')
+//         console.log(err)
+//     });
 }
+
+pump(process.stdin, chart(ready))
