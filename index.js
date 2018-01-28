@@ -34,16 +34,17 @@ console.log('init')
   })
 
   server.listen(5000, '0.0.0.0', function () {
-    sse.interval.unref()
-    console.log('server listening')
-    cb('http://localhost:' + server.address().port)
+    // sse.interval.unref()
+    console.log('server listening address')
+    console.log(server.address())
+    cb('http://'+server.address().address+':' + server.address().port)
   })
 
-  server.unref()
+//   server.unref()
 
   input.once('data', function (chunk) {
     header = chunk
-    console.log('got header ', header)
+    console.log('got header ', header.toString())
   })
 console.log('inited')
 
