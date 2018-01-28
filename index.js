@@ -17,23 +17,28 @@ module.exports = function (cb) {
 
     console.log('init chart-stream')
     
+    /// TODO MANUALLY MANAGE CONENCTED CLIENTS AND SEND THEM INPUT > FANOUT
+    
+    
   sse.on('connection', function (client) {
       console.log('client connection...')
-    //   if(header) client.write(header);
       
-    //   setTimeout(function(){
-    //       console.log('client connection pump starting..')
-    //     pump(input, client);
-    //     client.on('close', function(){
-    //         console.log('client closed')
-    //     })
-    //   },5000)
-    input.once('data', function (chunk) {
-        // console.log('input data')
-      if (chunk !== header) client.write(header)
-      client.write(chunk)
-      pump(input, client)
-    })
+      if(header) client.write(header);
+      
+      setTimeout(function(){
+          console.log('client connection pump starting..')
+        pump(input, client);
+        client.on('close', function(){
+            console.log('client closed')
+        })
+      },5000)
+    
+    // input.once('data', function (chunk) {
+    //     // console.log('input data')
+    //   if (chunk !== header) client.write(header)
+    //   client.write(chunk)
+    //   pump(input, client)
+    // })
   })
 
   server.listen(5000, '0.0.0.0', function () {
