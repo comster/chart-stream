@@ -14,12 +14,15 @@ module.exports = function (cb) {
   var header
 
   sse.install(server)
-console.log('init')
+
+    console.log('init chart-stream')
+    
   sse.on('connection', function (client) {
-      console.log('connection...')
+      console.log('client connection...')
       if(header) client.write(header);
       
       setTimeout(function(){
+          console.log('client connection pump starting..')
         pump(input, client);
         client.on('close', function(){
             console.log('client closed')
@@ -45,8 +48,13 @@ console.log('init')
   input.once('data', function (chunk) {
     header = chunk
     console.log('got header ', header.toString())
+    
+    // DEBUGGING
+    input.on('data', function (dataChunk) {
+        console.log('got data ', dataChunk.toString())
+    })
   })
-console.log('inited')
+console.log('inited chart-stream')
 
 process
   .on('unhandledRejection', (reason, p) => {
