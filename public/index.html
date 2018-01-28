@@ -37,7 +37,7 @@ es.onmessage = function (ev) {
   var rows = parseCsv(ev.data)
 
   if (!chart) {
-    chart = initChart(rows, true)
+    chart = initChart(rows, false)
   } else {
     append(rows)
   }
@@ -105,16 +105,19 @@ function initChart (rows, hasX) {
     data: d,
     point: { show: false },
     axis: {
-    //   x: { show: false },
-      x: { 
+      x: { show: false },
+      y: { tick: { format: d3.format('0,000') } }
+    },
+    legend: { show: showLegend }
+  }
+  
+  if(hasX) {
+      opts.axis.x = { 
           type: 'timeseries',
             tick: {
                 format: '%Y-%m-%d %H:%M:%S'
             }
-      },
-      y: { tick: { format: d3.format('0,000') } }
-    },
-    legend: { show: showLegend }
+      }
   }
 
   return c3.generate(opts)
