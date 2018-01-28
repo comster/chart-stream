@@ -14,6 +14,9 @@
     #graph {
       height: 100vh;
     }
+    path {
+        stroke-width: 4px;
+    }
   </style>
 </head>
 <body>
@@ -26,7 +29,7 @@ var es = new EventSource('/data')
 var closed = false
 var headers = []
 var chart
-
+console.log('es.onmessage');
 es.onmessage = function (ev) {
   if (closed) return
   if (ev.data.trim() === '') return
@@ -34,12 +37,14 @@ es.onmessage = function (ev) {
   var rows = parseCsv(ev.data)
 
   if (!chart) {
-    chart = initChart(rows)
+    chart = initChart(rows, hasX)
   } else {
     append(rows)
   }
 }
-
+// window.onbeforeunload = function(e) {
+//     es.close();
+// }
 es.addEventListener('end', function () {
   if (closed) return
   es.close()
@@ -47,7 +52,8 @@ es.addEventListener('end', function () {
 }, true)
 
 es.onerror = function (err) {
-  closed = true
+    console.log('onerr', err)
+  closed = true 
   throw err
 }
 
@@ -66,7 +72,7 @@ function hasHeader (rows) {
   return !/^\d+$/.test(rows[0][0])
 }
 
-function initChart (rows) {
+function initChart (rows, hasX) {
   var columns = []
   var showLegend = hasHeader(rows)
 
@@ -87,16 +93,25 @@ function initChart (rows) {
       columns[i].push(parseInt(col, 10))
     })
   })
-
-  var opts = {
-    bindto: '#graph',
-    data: {
+    var d = {
       columns: columns,
       type: 'line'
-    },
+    };
+    if(hasX) {
+        d.x = 'x';
+    }
+  var opts = {
+    bindto: '#graph',
+    data: d,
     point: { show: false },
     axis: {
-      x: { show: false },
+    //   x: { show: false },
+      x: { 
+          type: 'timeseries',
+            tick: {
+                format: '%Y-%m-%d'
+            }
+      },
       y: { tick: { format: d3.format('0,000') } }
     },
     legend: { show: showLegend }
