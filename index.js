@@ -48,13 +48,12 @@ module.exports = function (cb) {
   input.once('data', function (chunk) {
     header = chunk
     console.log('got header ', header.toString())
-    
-    // DEBUGGING
-    input.on('data', function (dataChunk) {
-        console.log('got data ', dataChunk.toString())
-    })
   })
-console.log('inited chart-stream')
+  // DEBUGGING
+input.on('data', function (dataChunk) {
+    console.log('got data ', dataChunk.toString())
+})
+console.log('inited chart-stream.')
 
 process
   .on('unhandledRejection', (reason, p) => {
