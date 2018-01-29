@@ -12,6 +12,14 @@ module.exports = function (cb) {
   var server = http.createServer(ecstatic({ root: path.join(__dirname, 'public') }))
   var sse = SSE('/data')
   var header
+  
+  var clients = []
+  
+  input.on('data', function(data){
+      for(var c in clients) {
+          clients[c].write(data);
+      }
+  })
 
   sse.install(server)
 
@@ -19,19 +27,25 @@ module.exports = function (cb) {
     
     /// TODO MANUALLY MANAGE CONENCTED CLIENTS AND SEND THEM INPUT > FANOUT
     
-    
   sse.on('connection', function (client) {
       console.log('client connection...')
-      
+      var cx = clients.push(client) - 1
       if(header) client.write(header);
       
-      setTimeout(function(){
-          console.log('client connection pump starting..')
-        pump(input, client);
-        client.on('close', function(){
-            console.log('client closed')
-        })
-      },5000)
+      client.on('close', function(){
+        console.log('client closed. remove from clients list len: '+clients.length)
+        clients.splice(cx, 1);
+        console.log('client closed. removed from clients list len: '+clients.length)
+    })
+    
+      
+    //   setTimeout(function(){
+    //       console.log('client connection pump starting..')
+    //     pump(input, client);
+    //     client.on('close', function(){
+    //         console.log('client closed')
+    //     })
+    //   },5000)
     
     // input.once('data', function (chunk) {
     //     // console.log('input data')
