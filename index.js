@@ -7,7 +7,7 @@ var pump = require('pump')
 var ecstatic = require('ecstatic')
 var SSE = require('sse-stream')
 
-module.exports = function (cb) {
+module.exports = function (cb, SERVER_PORT) {
   var input = new PassThrough()
   var server = http.createServer(ecstatic({ root: path.join(__dirname, 'public') }))
   var sse = SSE('/data')
@@ -33,9 +33,9 @@ module.exports = function (cb) {
       if(header) client.write(header);
       
       client.on('close', function(){
-        console.log('client closed. remove from clients list len: '+clients.length)
+        // console.log('client closed. remove from clients list len: '+clients.length)
         clients.splice(cx, 1);
-        console.log('client closed. removed from clients list len: '+clients.length)
+        // console.log('client closed. removed from clients list len: '+clients.length)
     })
     
       
@@ -55,7 +55,7 @@ module.exports = function (cb) {
     // })
   })
 
-  server.listen(5000, '0.0.0.0', function () {
+  server.listen(SERVER_PORT || 5000, '0.0.0.0', function () {
     // sse.interval.unref()
     console.log('server listening address')
     console.log(server.address())
