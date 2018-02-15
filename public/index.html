@@ -49,7 +49,7 @@ es.onmessage = function (ev) {
   var rows = parseCsv(ev.data)
 
   if (!chart) {
-    chart = initChart(rows, false)
+    chart = initChart(rows, true)
   } else {
     append(rows)
   }
